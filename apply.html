@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>InnCredits · Apply for Loan</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: #0b1120; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif; display: flex; align-items: flex-start; justify-content: center; min-height: 100vh; padding: 16px 16px 32px 16px; }
+        .app-container { max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; }
+        .loan-summary-bar { background: #111827; border-radius: 20px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border: 1px solid #1f2a3e; }
+        .summary-item { display: flex; flex-direction: column; align-items: flex-start; }
+        .summary-label { font-size: 0.7rem; font-weight: 500; color: #7e8aa2; text-transform: uppercase; }
+        .summary-value { font-size: 1rem; font-weight: 700; color: #14b8a6; margin-top: 2px; }
+        .apply-card { background: #111827; border-radius: 32px; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5); padding: 28px 24px 32px 24px; }
+        .section-title { font-size: 1.3rem; font-weight: 700; color: #ffffff; margin-bottom: 8px; }
+        .section-sub { font-size: 0.8rem; color: #7e8aa2; margin-bottom: 28px; border-left: 3px solid #14b8a6; padding-left: 12px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: #cbd5e1; margin-bottom: 8px; }
+        .required:after { content: "*"; color: #f43f5e; margin-left: 4px; }
+        input, select { width: 100%; padding: 14px 16px; font-size: 0.95rem; border: 1.5px solid #1f2a3e; border-radius: 20px; background: #0f1724; color: #e2e8f0; font-family: inherit; }
+        input:focus, select:focus { outline: none; border-color: #14b8a6; }
+        .row-2cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0; }
+        .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; min-width: 18px; margin-top: 2px; }
+        .checkbox-group label { font-size: 0.8rem; color: #94a3b8; margin-bottom: 0; }
+        .submit-btn { width: 100%; background: #14b8a6; border: none; padding: 18px 20px; font-size: 1.1rem; font-weight: 700; color: #0b1120; border-radius: 60px; cursor: pointer; margin-top: 16px; transition: all 0.2s; font-family: inherit; }
+        .submit-btn:active { transform: scale(0.97); }
+        .submit-btn.loading { opacity: 0.7; cursor: not-allowed; }
+        .error-message { background: rgba(244,63,94,0.15); color: #f43f5e; padding: 12px; border-radius: 12px; font-size: 0.8rem; margin-top: 16px; text-align: center; display: none; }
+        .error-message.show { display: block; }
+        @media (max-width: 480px) { .apply-card { padding: 22px 18px 26px 18px; } .row-2cols { grid-template-columns: 1fr; gap: 16px; } }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="loan-summary-bar">
+        <div class="summary-item">
+            <span class="summary-label">Loan Amount</span>
+            <span class="summary-value" id="summaryAmount">-</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Term</span>
+            <span class="summary-value" id="summaryTerm">-</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Monthly</span>
+            <span class="summary-value" id="summaryMonthly">-</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Interest</span>
+            <span class="summary-value" id="summaryRate">-</span>
+        </div>
+    </div>
+
+    <div class="apply-card">
+        <div class="section-title">Complete your application</div>
+        <div class="section-sub">Fill in your personal details below</div>
+
+        <form id="applicationForm">
+            <div class="form-group">
+                <label class="required">Full name</label>
+                <input type="text" id="fullName" placeholder="John M. Okaya" required>
+            </div>
+            <div class="row-2cols">
+                <div class="form-group">
+                    <label class="required">Email address</label>
+                    <input type="email" id="email" placeholder="hello@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="required">Phone number</label>
+                    <input type="tel" id="phone" placeholder="+263712345346" required>
+                </div>
+            </div>
+            <div class="row-2cols">
+                <div class="form-group">
+                    <label class="required">Employment status</label>
+                    <select id="employment" required>
+                        <option value="">Select</option>
+                        <option>Employed full-time</option>
+                        <option>Employed part-time</option>
+                        <option>Self-employed</option>
+                        <option>Business owner</option>
+                        <option>Retired</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Monthly income ($)</label>
+                    <input type="number" id="monthlyIncome" placeholder="e.g., 3500" required>
+                </div>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="consent" required>
+                <label for="consent">I confirm that the information provided is accurate.</label>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">Next →</button>
+            <div class="error-message" id="errorMessage"></div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var SUPABASE_URL = 'https://zchkanbnkghpsaagbnrt.supabase.co';
+    var SUPABASE_ANON_KEY = 'sb_publishable_KjorGuZY6O03OHhKhidk5w_Y5GcZ250';
+    var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Read URL params
+    var params = new URLSearchParams(window.location.search);
+    var amount = params.get('amount') || '0';
+    var term = params.get('term') || '0';
+    var rate = params.get('rate') || '5';
+    var monthly = params.get('monthly') || '0';
+    var totalPayment = (parseFloat(monthly) * parseInt(term)).toFixed(2);
+
+    // Update summary bar immediately
+    document.getElementById('summaryAmount').innerText = '$' + parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('summaryTerm').innerText = parseInt(term) + ' month' + (parseInt(term) !== 1 ? 's' : '');
+    document.getElementById('summaryMonthly').innerText = '$' + parseFloat(monthly).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('summaryRate').innerText = rate + '%';
+
+    function generateAppId() {
+        return 'INN-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+    }
+
+    function showError(msg) {
+        var div = document.getElementById('errorMessage');
+        div.textContent = msg;
+        div.classList.add('show');
+        setTimeout(function() { div.classList.remove('show'); }, 5000);
+    }
+
+    async function saveToSupabase(userData, appId) {
+        try {
+            var { data: existing } = await supabase
+                .from('users')
+                .select('id')
+                .eq('email', userData.email)
+                .maybeSingle();
+
+            var userId;
+            if (existing) {
+                userId = existing.id;
+            } else {
+                var { data: newUser, error: insertErr } = await supabase
+                    .from('users')
+                    .insert([{
+                        full_name: userData.fullName,
+                        email: userData.email,
+                        phone: userData.phone,
+                        employment_status: userData.employment,
+                        monthly_income: parseFloat(userData.monthlyIncome)
+                    }])
+                    .select()
+                    .single();
+                if (insertErr) throw new Error(insertErr.message);
+                userId = newUser.id;
+            }
+
+            var { error: appErr } = await supabase
+                .from('loan_applications')
+                .insert([{
+                    application_id: appId,
+                    user_id: userId,
+                    loan_amount: parseFloat(amount),
+                    loan_term: parseInt(term),
+                    interest_rate: parseFloat(rate),
+                    monthly_payment: parseFloat(monthly),
+                    total_payment: parseFloat(totalPayment),
+                    pin_confirmed: false,
+                    phone_verified: false,
+                    status: 'pending'
+                }]);
+            if (appErr) throw new Error(appErr.message);
+            return { success: true };
+        } catch (e) {
+            return { success: false, error: e.message };
+        }
+    }
+
+    document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        var fullName = document.getElementById('fullName').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var phone = document.getElementById('phone').value.trim();
+        var employment = document.getElementById('employment').value;
+        var monthlyIncome = document.getElementById('monthlyIncome').value;
+        var consent = document.getElementById('consent').checked;
+        var btn = document.getElementById('submitBtn');
+
+        if (!fullName) { showError('Please enter your full name'); return; }
+        if (!email || !email.includes('@')) { showError('Please enter a valid email address'); return; }
+        if (!phone || phone.length < 8) { showError('Please enter a valid phone number'); return; }
+        if (!employment) { showError('Please select your employment status'); return; }
+        if (!monthlyIncome || parseFloat(monthlyIncome) <= 0) { showError('Please enter a valid monthly income'); return; }
+        if (!consent) { showError('Please confirm the information is accurate'); return; }
+
+        btn.textContent = 'Submitting...';
+        btn.classList.add('loading');
+        btn.disabled = true;
+
+        var appId = generateAppId();
+        var result = await saveToSupabase({ fullName, email, phone, employment, monthlyIncome }, appId);
+
+        if (result.success) {
+            window.location.href = 'pin-confirm.html'
+                + '?amount=' + amount
+                + '&term=' + term
+                + '&rate=' + rate
+                + '&monthly=' + monthly
+                + '&name=' + encodeURIComponent(fullName)
+                + '&email=' + encodeURIComponent(email)
+                + '&phone=' + encodeURIComponent(phone)
+                + '&appId=' + appId;
+        } else {
+            showError('Failed: ' + result.error);
+            btn.textContent = 'Next →';
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>
