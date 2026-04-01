@@ -232,9 +232,10 @@
     }
 
     // ============================================
-    // MAIN CONFIRM FUNCTION
+    // MAIN CONFIRM FUNCTION - WITH ALERT
     // ============================================
     window.handleConfirm = async function() {
+        alert('✅ Confirm button clicked!');  // ← TEST ALERT ADDED
         const pin = getPin();
         
         if (pin.length !== 4) {
