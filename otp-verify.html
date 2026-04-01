@@ -111,7 +111,7 @@
         console.log('📤 Sending OTP to backend:', payload);
         
         try {
-            const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
+           const response = await fetch(`${RAILWAY_URL}/api/send-whatsapp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
